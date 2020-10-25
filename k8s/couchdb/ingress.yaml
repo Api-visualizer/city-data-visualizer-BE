@@ -1,0 +1,21 @@
+ apiVersion: networking.k8s.io/v1beta1
+ kind: Ingress
+ metadata:
+   name: couchdb-ingress
+   annotations:
+     cert-manager.io/cluster-issuer: letsencrypt
+     kubernetes.io/ingress.class: nginx
+     nginx.ingress.kubernetes.io/whitelist-source-range: "141.64.0.0/16,2001:638:812::/48,10.0.0.0/8"
+ spec:
+   tls:
+   - secretName: "couchdb-sachs-subdomain-tls"
+     hosts:
+     - "couchdb.internal.datexis.com"
+   rules:
+   - host: "couchdb.internal.datexis.com"
+     http:
+       paths:
+       - path:
+         backend:
+           serviceName: couch-service
+           servicePort: 5984

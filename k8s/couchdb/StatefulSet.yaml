@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: couchdb
+  namespace: sachs
+spec:
+  serviceName: "couch-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: couch
+  template:
+    metadata:
+      labels:
+        app: couch # pod label
+    spec:
+      containers:
+      - name: couchdb
+        image: couchdb:3.1.1
+        env:
+        - name: NODE_NETBIOS_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODENAME
+          value: $(NODE_NETBIOS_NAME).couch-service # FQDN in vm.args
+        - name: COUCHDB_USER
+          value: ***
+        - name: COUCHDB_PASSWORD
+          value: ***
+        - name: COUCHDB_SECRET
+          value: ***
+        - name: ERL_FLAGS
+          value: "-name couchdb@$(NODENAME)"
+        - name: ERL_FLAGS
+          value: "-setcookie ***" #   the “password” used when nodes connect to each other.
+        ports:
+        - name: couchdb
+          containerPort: 5984
+        - name: epmd
+          containerPort: 4369
+        - containerPort: 9100
+        volumeMounts:
+          - name: couch-pvc
+            mountPath: /opt/couchdb/data
+  volumeClaimTemplates:
+  - metadata:
+      name: couch-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      selector:
+        matchLabels:
+          volume: couch-volume
