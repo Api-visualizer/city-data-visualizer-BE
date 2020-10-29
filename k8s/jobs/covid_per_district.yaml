@@ -1,0 +1,14 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: covid-per-district
+spec:
+  schedule: "0 1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: script
+            image: registry.datexis.com/kbrendel/covid_per_district:latest            
+          restartPolicy: Never
