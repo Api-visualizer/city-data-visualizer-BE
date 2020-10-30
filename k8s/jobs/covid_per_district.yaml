@@ -10,5 +10,7 @@ spec:
         spec:
           containers:
           - name: script
-            image: registry.datexis.com/kbrendel/covid_per_district:latest            
+            image: registry.datexis.com/kbrendel/covid_per_district:latest                                  
+          imagePullSecrets: 
+            - name: private-registry-auth
           restartPolicy: Never
