@@ -1,1 +1,2 @@
 pycouchdb
+python-dotenv
