@@ -2,12 +2,11 @@ version: '3.3'
 
 services:
   db:
-    image: mongo:4.4
+    image: couchdb:3.1.1
   ports:
-    - 27017:27017
+    - 2894:2894
   volumes:
-    - db-data:/data/db
-    - mongo-config:/data/configdb
+    - db-data:/opt/couchdb/data
 
   fetch-service:
     build:
@@ -16,16 +15,9 @@ services:
       - "5000:5000"
     restart: always
 
-    database-service:
-      build:
-        dockerfile: ./database-service/Dockerfile
-      ports:
-        - "5000:5000"
-      restart: always
-
-      transform-service:
-        build:
-          dockerfile: ./transform-service/Dockerfile
-        ports:
-          - "5000:5000"
-        restart: always
+  database-service:
+    build:
+      dockerfile: ./database-service/Dockerfile
+    ports:
+      - "5000:5000"
+    restart: always

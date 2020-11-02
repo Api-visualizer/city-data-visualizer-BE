@@ -12,7 +12,7 @@ flask run
 
 ### with docker
 ```
-docker build db-service:local
+docker build -t db-service:local .
 
 docker run -p 5000:5000 db-service:local
 ```

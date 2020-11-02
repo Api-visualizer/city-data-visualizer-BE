@@ -35,6 +35,3 @@ def shutdown():
 
 
 api.add_resource(CovidPerDistrict, '/api/v1/covid')
-
-# run app
-app.run(True)
