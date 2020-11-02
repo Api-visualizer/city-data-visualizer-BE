@@ -13,7 +13,11 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 api = Api(app)
-client = None
+
+client = Cloudant(os.environ.get('DB_USER'), os.environ.get('DB_PW'),
+                  url=os.environ.get('DB_URL'),
+                  connect=True,
+                  auto_renew=True)
 
 
 class CovidPerDistrict(Resource):
@@ -32,12 +36,5 @@ def shutdown():
 
 api.add_resource(CovidPerDistrict, '/api/v1/covid')
 
-
-if __name__ == '__main__':
-    # connect to db
-    client = Cloudant(os.environ.get('DB_USER'), os.environ.get('DB_PW'),
-                      url=os.environ.get('DB_URL'),
-                      connect=True,
-                      auto_renew=True)
-    # run app
-    app.run(debug=True)
+# run app
+app.run(True)
