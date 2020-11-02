@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-api
+  namespace: sachs
+  labels:
+    app: database-api
+    tier: api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: database-api
+        tier: api
+    spec:
+      containers:
+        - name: database-api
+          image: registry.datexis.com/ksachs/database-service:v1
+          ports:
+            - name: client-port
+              containerPort: 5000
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: private-registry-auth
+      priorityClassName: important
+  selector:
+    matchLabels:
+      app: database-api
+      tier: api	
