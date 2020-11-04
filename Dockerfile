@@ -1,6 +1,8 @@
 FROM python:3.8
 
-COPY . .
+COPY database-service/api.yml .
+COPY database-service/app.py .
+COPY database-service/requirements.txt .
 
 RUN chmod +x requirements.txt
 
@@ -12,4 +14,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
 
-CMD ["flask", "run", "--host","0.0.0.0"]
+CMD flask run --host 0.0.0.0
