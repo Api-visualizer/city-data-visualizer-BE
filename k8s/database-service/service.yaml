@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: database-api-service
+  name: cdv-backend-service
 spec:
   ports:
     - port: 5000
   selector:
-    app: database-api
+    app: cdv-backend
