@@ -1,3 +1,8 @@
+tags:
+    - API Endpoints
+responses:
+  200:
+    description: 
 parameters:
   - name: _id
     in: path
@@ -42,11 +47,4 @@ definitions:
         type: number
       cases_per_population:
         type: number
-
-
-
-
-
-
-
 
