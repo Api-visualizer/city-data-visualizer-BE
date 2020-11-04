@@ -1,0 +1,32 @@
+name: cdv-backend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+defaults:
+  run:
+    working-directory: ./database-service
+
+jobs:
+  PUBLISH-BE:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish to Docker registry
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          name: registry.datexis.com/ksachs/cdv-backend:latest
+          username: ${{ secrets.DOCKER_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSPHRASE }}
+          registry: registry.datexis.com
+          snapshot: true
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+      - name: Restart cdv-backend pod
+        run: kubectl -n sachs delete pod -l app=cdv-backend
