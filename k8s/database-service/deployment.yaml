@@ -18,6 +18,9 @@ spec:
           ports:
             - name: client-port
               containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: cdv-backend-config
       restartPolicy: Always
       imagePullSecrets:
         - name: private-registry-auth
