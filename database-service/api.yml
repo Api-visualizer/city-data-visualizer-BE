@@ -3,3 +3,48 @@ tags:
 responses:
   200:
     description: 
+parameters:
+  - name: _id
+    in: path
+    type: string
+    description: "asda"
+  - name: _rev
+    in: path
+    type: string
+  - name: date
+    in: path
+    type: string
+  - name: data
+definitions:
+  data:
+    type: object
+    properties:
+      type:
+        type: string
+      features:
+        type: array
+  feature:
+    type: object
+    properties:
+      properties:
+        type: object
+  properties:
+    type: object
+    properties:
+      death rates:
+        type: string
+      cases:
+        type: string
+      deaths:
+        type: int
+      last_update:
+        type: string
+      recovered:
+        type: int
+      GEN:
+        type: string
+      cases_per_100k:
+        type: number
+      cases_per_population:
+        type: number
+
