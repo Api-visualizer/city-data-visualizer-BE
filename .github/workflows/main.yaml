@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Publish to Docker registry
-        uses: elgohr/Publish-Docker-Github-Action@main
+        uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: registry.datexis.com/ksachs/cdv-backend:latest
           username: ${{ secrets.DOCKER_REGISTRY_USER }}

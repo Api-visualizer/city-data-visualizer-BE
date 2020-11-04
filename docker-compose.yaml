@@ -17,7 +17,7 @@ services:
 
   database-service:
     build:
-      dockerfile: ./database-service/Dockerfile
+      dockerfile: database-service/local.Dockerfile
     ports:
       - "5000:5000"
     restart: always
