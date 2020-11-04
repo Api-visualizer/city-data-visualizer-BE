@@ -35,7 +35,7 @@ obj = {
 
 server_url = "http://{}:{}@couchdb.internal.datexis.com/".format(os.environ.get("COUCHDB_USERNAME"), os.environ.get("COUCHDB_PASSWORD"))
 server = pycouchdb.Server(server_url)
-db = server.database("covid_per_district")
+db = server.database("berlin_covid_district")
 
 if not any(document["doc"]["date"] == obj["date"] for document in db.all()):
     db.save(obj)
