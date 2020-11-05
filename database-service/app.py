@@ -20,11 +20,15 @@ client = Cloudant(os.environ.get('DB_USER'), os.environ.get('DB_PW'),
                   connect=True,
                   auto_renew=True)
 
+print(f'connected to {os.environ.get("DB_URL")}')
+
 swagger = Swagger(app)
 api = Api(app)
 
 # run app
 app.run(debug=True)
+print(f'connected to {os.environ.get("DB_URL")}')
+
 
 # classes
 class BerlinVerschenken(Resource):
@@ -42,6 +46,7 @@ class BerlinCovidDistrict(Resource):
 class Json(Resource):
     @swag_from('api.yml', validation=False)
     def get(self):
+        print('hallo json')
         return {'json sagt': 'hallo i bims, der json'}, 200
 
 # disconnct from db on server shutdown
