@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 from flasgger import Swagger, swag_from
 import atexit
 
-import os
+import os, sys
 
 
 app = Flask(__name__)
@@ -14,20 +14,8 @@ app.config['SWAGGER'] = {
     'title': 'City Data Visualizer',
     'uiversion': 3
 }
-# connect to db
-client = Cloudant(os.environ.get('DB_USER'), os.environ.get('DB_PW'),
-                  url=os.environ.get('DB_URL'),
-                  connect=True,
-                  auto_renew=True)
-
-print(f'connected to {os.environ.get("DB_URL")}')
-
 swagger = Swagger(app)
 api = Api(app)
-
-# run app
-app.run(debug=True)
-print(f'connected to {os.environ.get("DB_URL")}')
 
 
 # classes
@@ -37,17 +25,17 @@ class BerlinVerschenken(Resource):
         return get_table_data('berlin_verschenken'), 200
 
 
+class BerlinShapesDistrict(Resource):
+    @swag_from('api.yml', validation=False)
+    def get(self):
+        return get_table_data('berlin_shapes_district'), 200
+
+
 class BerlinCovidDistrict(Resource):
     @swag_from('api.yml', validation=False)
     def get(self):
         return get_table_data('berlin_covid_district'), 200
 
-
-class Json(Resource):
-    @swag_from('api.yml', validation=False)
-    def get(self):
-        print('hallo json')
-        return {'json sagt': 'hallo i bims, der json'}, 200
 
 # disconnct from db on server shutdown
 @atexit.register
@@ -72,5 +60,16 @@ def get_table_data(table_name):
 
 # register endpoints
 api.add_resource(BerlinVerschenken, '/api/v1/berlin-verschenken')
+api.add_resource(BerlinShapesDistrict, '/api/v1/berlin-shapes-district')
 api.add_resource(BerlinCovidDistrict, '/api/v1/berlin-covid-district')
-api.add_resource(Json, '/')
+
+
+if __name__ == "__main__":
+    # connect to db
+    USER = os.environ.get('DB_USER')
+    PASS = os.environ.get('DB_PW')
+    URL = os.environ.get('DB_URL')
+    client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
+
+    # run app
+    app.run(debug=True)
