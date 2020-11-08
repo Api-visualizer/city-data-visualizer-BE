@@ -12,4 +12,6 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
 
-ENTRYPOINT ["sh", "bin/start.sh"]
+RUN chmod +x start.sh
+
+ENTRYPOINT ["sh", "start.sh"]

@@ -4,8 +4,7 @@ from flask_restful import Resource, Api
 from flasgger import Swagger, swag_from
 import atexit
 
-import os, sys
-
+import os
 
 app = Flask(__name__)
 
@@ -16,7 +15,6 @@ app.config['SWAGGER'] = {
 }
 swagger = Swagger(app)
 api = Api(app)
-
 
 # classes
 class BerlinVerschenken(Resource):
@@ -36,6 +34,10 @@ class BerlinCovidDistrict(Resource):
     def get(self):
         return get_table_data('berlin_covid_district'), 200
 
+
+class Json(Resource):
+    def get(self):
+        return {'json sagt': 'hallo i bims der json'}, 200
 
 # disconnct from db on server shutdown
 @atexit.register
@@ -58,18 +60,16 @@ def get_table_data(table_name):
         return ''
 
 
-# register endpoints
-api.add_resource(BerlinVerschenken, '/api/v1/berlin-verschenken')
-api.add_resource(BerlinShapesDistrict, '/api/v1/berlin-shapes-district')
-api.add_resource(BerlinCovidDistrict, '/api/v1/berlin-covid-district')
+if __name__ == 'app':
+    # register endpoints
+    api.add_resource(BerlinVerschenken, '/api/v1/berlin-verschenken')
+    api.add_resource(BerlinShapesDistrict, '/api/v1/berlin-shapes-district')
+    api.add_resource(BerlinCovidDistrict, '/api/v1/berlin-covid-district')
+    api.add_resource(Json, '/')
 
-
-if __name__ == "__main__":
     # connect to db
     USER = os.environ.get('DB_USER')
     PASS = os.environ.get('DB_PW')
     URL = os.environ.get('DB_URL')
     client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
-
-    # run app
-    app.run(debug=True)
+    print(f'db client: {USER}, {PASS}, {URL}')
