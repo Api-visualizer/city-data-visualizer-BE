@@ -1,43 +1,43 @@
+import werkzeug
+werkzeug.cached_property = werkzeug.utils.cached_property  # fix for "ImportError: cannot import name 'cached_property'"
+
 from cloudant import Cloudant
 from flask import Flask
-from flask_restful import Resource, Api
-from flasgger import Swagger, swag_from
+from flask_restplus import Api, Resource
+
 import atexit
 
-import os
+import os, sys
+
 
 app = Flask(__name__)
+api = Api(app,
+          version='1.0.1',
+          title='City Data Visualizer',
+          default='API Endpoints',
+          default_label='',
+          doc='/apidocs/',
+          prefix='/api')
 
-# swagger config
-app.config['SWAGGER'] = {
-    'title': 'City Data Visualizer',
-    'uiversion': 3
-}
-swagger = Swagger(app)
-api = Api(app)
 
 # classes
+@api.route('/api/v1/berlin-verschenken')
 class BerlinVerschenken(Resource):
-    @swag_from('api.yml', validation=False)
     def get(self):
         return get_table_data('berlin_verschenken'), 200
 
 
+@api.route('/api/v1/berlin-shapes-district')
 class BerlinShapesDistrict(Resource):
-    @swag_from('api.yml', validation=False)
     def get(self):
         return get_table_data('berlin_shapes_district'), 200
 
 
+@api.route('/api/v1/berlin-covid-district')
 class BerlinCovidDistrict(Resource):
-    @swag_from('api.yml', validation=False)
     def get(self):
         return get_table_data('berlin_covid_district'), 200
 
-
-class Json(Resource):
-    def get(self):
-        return {'json sagt': 'hallo i bims der json'}, 200
 
 # disconnct from db on server shutdown
 @atexit.register
@@ -60,16 +60,12 @@ def get_table_data(table_name):
         return ''
 
 
-if __name__ == 'app':
-    # register endpoints
-    api.add_resource(BerlinVerschenken, '/api/v1/berlin-verschenken')
-    api.add_resource(BerlinShapesDistrict, '/api/v1/berlin-shapes-district')
-    api.add_resource(BerlinCovidDistrict, '/api/v1/berlin-covid-district')
-    api.add_resource(Json, '/')
-
+if __name__ == "__main__":
     # connect to db
     USER = os.environ.get('DB_USER')
     PASS = os.environ.get('DB_PW')
     URL = os.environ.get('DB_URL')
     client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
-    print(f'db client: {USER}, {PASS}, {URL}')
+
+    # run app
+    app.run(debug=True)
