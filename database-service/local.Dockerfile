@@ -6,7 +6,7 @@ RUN chmod +x requirements.txt
 
 RUN pip install -r requirements.txt --no-cache-dir --compile
 
-ENV FLASK_ENV="production"
+ENV FLASK_ENV production
 
 ENV PYTHONUNBUFFERED=1
 
