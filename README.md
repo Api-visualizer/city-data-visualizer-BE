@@ -5,11 +5,11 @@
 
 you need to export three environment variables before "flask run" 
 
-EXPORT DB_USER=""
+export DB_USER=""
 
-EXPORT DB_PW=""
+export DB_PW=""
 
-EXPORT DB_URL=""
+export DB_URL=""
 
 (on windows use SET instead of EXPORT)
 ```
