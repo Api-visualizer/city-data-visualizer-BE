@@ -18,8 +18,10 @@ export DB_URL=""
 cd database-service/
 python3 -m venv venv
 source venv/bin/activate
-source .env
 pip install -r requirements.txt
+export DB_USER=
+export DB_PW=
+export DB_URL=
 flask run 
 
 ```
