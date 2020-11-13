@@ -1,5 +1,7 @@
 # api-visualizer-BE
 
+- vpn required
+
 ## how to start this backend-service
 ### on your machine
 
@@ -11,7 +13,7 @@ export DB_PW=""
 
 export DB_URL=""
 
-(on windows use SET instead of EXPORT)
+(on windows use set instead of export)
 ```
 cd database-service/
 python3 -m venv venv
@@ -31,5 +33,12 @@ cd database-service/
 docker build -t cdv-backend:local . -f local.Dockerfile
 
 docker run -p 5000:5000 cdv-backend:local
+```
+
+## docker container clean up
+docker ps shows you all running container on your machine. 
+
+```
+docker stop $(docker ps -a -q)
 ```
 
