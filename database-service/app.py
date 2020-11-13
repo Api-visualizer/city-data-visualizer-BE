@@ -1,3 +1,5 @@
+import os
+
 import werkzeug
 werkzeug.cached_property = werkzeug.utils.cached_property  # fix for "ImportError: cannot import name 'cached_property'"
 
@@ -7,8 +9,6 @@ from flask_restplus import Api, Resource
 
 import atexit
 
-import os, sys
-
 
 app = Flask(__name__)
 api = Api(app,
@@ -16,8 +16,14 @@ api = Api(app,
           title='City Data Visualizer',
           default='API Endpoints',
           default_label='',
-          doc='/apidocs/',
-          prefix='/api')
+          doc='/apidocs/')
+
+
+# connect to db
+USER = os.environ.get('DB_USER')
+PASS = os.environ.get('DB_PW')
+URL = os.environ.get('DB_URL')
+client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
 
 
 # classes
@@ -57,15 +63,9 @@ def get_table_data(table_name):
         return payload
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
-        return ''
+        return 'Something went wrong.', 404
 
 
-if __name__ == "__main__":
-    # connect to db
-    USER = os.environ.get('DB_USER')
-    PASS = os.environ.get('DB_PW')
-    URL = os.environ.get('DB_URL')
-    client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
-
+if __name__ == '__main__':
     # run app
     app.run(debug=True)
