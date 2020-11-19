@@ -56,25 +56,24 @@ class BerlinCovidDistrict(Resource):
     def get(self):
         # Define parser and request args
         parser = reqparse.RequestParser()
-        parser.add_argument('year', type=int, required=True, help='set a year')
+        parser.add_argument('year', type=int, required=False, help='fetch all entries, or set a parameter: year=2019')
         args = parser.parse_args()
-        year = str(args['year'])
+        year = args['year']
         return get_table_data('berlin_accidents', year), 200
 
 
 # fetch all entries from table
-def get_table_data(table_name, param=None):
+def get_table_data(table_name, param):
     try:
         table_data = client[table_name]
         if param:
-            payload = table_data[param]
+            payload = table_data[str(param)]
         else:
             payload = [data for data in table_data]
-        if payload:
-            return payload, 200
+        return payload, 200
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
-        return 'No data available. Try changing the value of the parameter', 400
+        return 'No data available. Try to change year parameter (year=2019) or leave it out to fetch all data.', 400
 
 
 
