@@ -63,7 +63,7 @@ class BerlinCovidDistrict(Resource):
 
 
 # fetch all entries from table
-def get_table_data(table_name, param):
+def get_table_data(table_name, param=False):
     try:
         table_data = client[table_name]
         if param:
