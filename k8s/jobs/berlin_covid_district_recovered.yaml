@@ -1,16 +1,16 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: covid-per-district
+  name: berlin-covid-district-recovered
 spec:
-  schedule: "0 1 * * *"
+  schedule: "0 */6 * * *"
   jobTemplate:
     spec:
       template:
         spec:
           containers:
           - name: script
-            image: registry.datexis.com/kbrendel/covid_per_district:latest                                  
+            image: registry.datexis.com/kbrendel/berlin_covid_district_recovered:latest
           imagePullSecrets: 
             - name: private-registry-auth
           restartPolicy: Never
