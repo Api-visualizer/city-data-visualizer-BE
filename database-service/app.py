@@ -27,10 +27,10 @@ client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
 
 
 # routes
-@api.route('/api/v1/berlin-verschenken')
-class BerlinVerschenken(Resource):
+@api.route('/api/v1/berlin-covid-age')
+class BerlinCovidAge(Resource):
     def get(self):
-        return get_table_data('berlin_verschenken'), 200
+        return get_table_data('covid_age'), 200
 
 
 @api.route('/api/v1/berlin-shapes-district')
