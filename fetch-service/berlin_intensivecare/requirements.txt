@@ -1,0 +1,4 @@
+pycouchdb
+python-dotenv
+geojson
+urllib3
