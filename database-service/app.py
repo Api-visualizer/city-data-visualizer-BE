@@ -71,12 +71,19 @@ def get_table_data(table_name, **kwargs):
         table_data = client[table_name]
         if year:
             payload = table_data[str(year)]
+            if type:
+                new_payload = []
+                for idx in payload['accidents'].items():
+                    if idx[1][type] > 0:
+                        new_payload.append(idx)
+                return new_payload
+
         else:
             payload = [data for data in table_data]
         return payload, 200
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
-        return 'No data available. Try to change year parameter (year=2019) or leave it out to fetch all data.', 400
+        return 'No data available. Try other parameter values.', 400
 
 
 
