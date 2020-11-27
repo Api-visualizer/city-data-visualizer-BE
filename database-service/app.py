@@ -56,24 +56,34 @@ class BerlinCovidDistrict(Resource):
     def get(self):
         # Define parser and request args
         parser = reqparse.RequestParser()
-        parser.add_argument('year', type=int, required=False, help='fetch all entries, or set a parameter: year=2019')
+        parser.add_argument('year', type=int, required=False, help='you can set a parameter: year=2019')
+        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='foot' | options are: bike, car, foot, motorcycle, truck")
         args = parser.parse_args()
         year = args['year']
-        return get_table_data('berlin_accidents', year), 200
+        type = args['type']
+        return get_table_data('berlin_accidents', year=year, type=type), 200
 
 
 # fetch all entries from table
-def get_table_data(table_name, param=False):
+def get_table_data(table_name, **kwargs):
+    year, type = kwargs['year'], kwargs['type']
     try:
         table_data = client[table_name]
-        if param:
-            payload = table_data[str(param)]
+        if year:
+            payload = table_data[str(year)]
+            if type:
+                new_payload = []
+                for idx in payload['accidents'].items():
+                    if idx[1][type] > 0:
+                        new_payload.append(idx)
+                return new_payload
+
         else:
             payload = [data for data in table_data]
         return payload, 200
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
-        return 'No data available. Try to change year parameter (year=2019) or leave it out to fetch all data.', 400
+        return 'No data available. Try other parameter values.', 400
 
 
 
@@ -88,6 +98,7 @@ def get_table_data_latest(table_name):
     except Exception as e:
         print('ERROR: Could not fetch table >{}<. Cause: {}'.format(table_name, e))
         return e, 404
+
 
 
 # disconnct from db on server shutdown
