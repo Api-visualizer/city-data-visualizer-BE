@@ -25,7 +25,6 @@ PASS = os.environ.get('DB_PW')
 URL = os.environ.get('DB_URL')
 client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
 
-
 # routes
 @api.route('/api/v1/berlin-covid-age')
 class BerlinCovidAge(Resource):
@@ -44,6 +43,10 @@ class BerlinCovidDistrict(Resource):
     def get(self):
         return get_table_data('berlin_covid_district'), 200
 
+@api.route('/api/v1/berlin-covid-intensive-care')
+class BerlinCovidDistrict(Resource):
+    def get(self):
+        return get_table_data('berlin_covid_intensivecare'), 200
 
 @api.route('/api/v1/berlin-covid-district/latest')
 class BerlinCovidDistrict(Resource):
@@ -66,7 +69,7 @@ class BerlinCovidDistrict(Resource):
 
 # fetch all entries from table
 def get_table_data(table_name, **kwargs):
-    year, type = kwargs['year'], kwargs['type']
+    year, type = kwargs.get('year'), kwargs.get('type')
     try:
         table_data = client[table_name]
         if year:
