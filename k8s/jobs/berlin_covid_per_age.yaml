@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
           - name: script
-            image: registry.datexis.com/ksachs/berlin_covid_per_age:v1
+            image: registry.datexis.com/ksachs/berlin_covid_per_age:v2
           imagePullSecrets:
             - name: private-registry-auth
           restartPolicy: Never
