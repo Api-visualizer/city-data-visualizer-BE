@@ -4,14 +4,14 @@ metadata:
   name: berlin-covid-age
   namespace: sachs
 spec:
-  schedule: "0 6 * * *"
+  schedule: "0 */6 * * *"
   jobTemplate:
     spec:
       template:
         spec:
           containers:
           - name: script
-            image: registry.datexis.com/ksachs/berlin_covid_per_age:latest
+            image: registry.datexis.com/ksachs/berlin_covid_per_age:v1
           imagePullSecrets:
             - name: private-registry-auth
           restartPolicy: Never
