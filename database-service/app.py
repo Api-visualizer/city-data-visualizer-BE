@@ -44,6 +44,10 @@ class BerlinCovidDistrict(Resource):
     def get(self):
         return get_table_data('berlin_covid_district'), 200
 
+@api.route('/api/v1/berlin-covid-intensive-care')
+class BerlinCovidDistrict(Resource):
+    def get(self):
+        return get_table_data('berlin_covid_intensivecare'), 200
 
 @api.route('/api/v1/berlin-covid-district/latest')
 class BerlinCovidDistrict(Resource):
