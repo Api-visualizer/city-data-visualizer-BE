@@ -43,10 +43,18 @@ class BerlinCovidDistrict(Resource):
     def get(self):
         return get_table_data('berlin_covid_district'), 200
 
+
 @api.route('/api/v1/berlin-covid-intensive-care')
 class BerlinCovidDistrict(Resource):
     def get(self):
         return get_table_data('berlin_covid_intensivecare'), 200
+
+
+@api.route('/api/v1/berlin-covid-intensive-care/latest')
+class BerlinCovidDistrict(Resource):
+    def get(self):
+        return get_table_data_latest('berlin_covid_intensivecare'), 200
+
 
 @api.route('/api/v1/berlin-covid-district/latest')
 class BerlinCovidDistrict(Resource):
@@ -87,7 +95,6 @@ def get_table_data(table_name, **kwargs):
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
         return 'No data available. Try other parameter values.', 400
-
 
 
 # fetch latest entry from table
