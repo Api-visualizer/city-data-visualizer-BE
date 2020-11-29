@@ -7,6 +7,8 @@ metadata:
     app: cdv-backend
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -14,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cdv-backend
-          image: registry.datexis.com/ksachs/cdv-backend:v3
+          image: registry.datexis.com/ksachs/cdv-backend:latest
           ports:
             - name: client-port
               containerPort: 5000
