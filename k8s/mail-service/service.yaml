@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdv-mail-service
+  namespace: sachs
+spec:
+    ports:
+    - port: 5000
+      protocol: TCP
+    selector:
+      app: cdv-mail
+    type: LoadBalancer

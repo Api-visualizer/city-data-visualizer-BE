@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cdv-mail
+  namespace: sachs
+  labels:
+    app: cdv-mail
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cdv-mail
+    spec:
+      containers:
+        - name: cdv-mail
+          image: registry.datexis.com/ksachs/cdv-mail:v7
+          ports:
+            - name: client-port
+              containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: cdv-mail-config
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: private-registry-auth
+      priorityClassName: important
+  selector:
+    matchLabels:
+      app: cdv-mail
