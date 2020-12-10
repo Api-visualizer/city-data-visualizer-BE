@@ -64,6 +64,22 @@ class BerlinCovidDAccidents(Resource):
         return get_table_data('berlin_accidents', year=year, type=type), 200
 
 
+# this route should replace '/api/v1/berlin-accidents'
+@api.route('/api/v1/berlin-accidents-new')
+class BerlinCovidDAccidentsNew(Resource):
+    def get(self):
+         # Define parser and request args
+        parser = reqparse.RequestParser()
+        parser.add_argument('year', type=int, required=False, help='you can set a parameter: year=2019')
+        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='foot' | options are: bike, car, foot, motorcycle, truck")
+        parser.add_argument('hour', type=str, required=False, help="you can set a parameter: hour='16' | values form 0-24")
+        args = parser.parse_args()
+        year = args['year']
+        type = args['type']
+        hour = args['hour']
+        return get_accident_data('berlin_accidents', year=year, type=type, hour=hour), 200
+
+
 # fetch all entries from table
 def get_table_data(table_name, **kwargs):
     year, type = kwargs['year'], kwargs['type']
@@ -85,6 +101,24 @@ def get_table_data(table_name, **kwargs):
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
         return 'No data available. Try other parameter values.', 400
 
+
+# accident route
+def get_accident_data(table_name, **kwargs):
+    year, type, hour = kwargs['year'], kwargs['type'], kwargs['hour']
+    try:
+        payload = client[table_name]
+        if year:
+            payload = payload['geojson_' + str(year)]
+        if type:
+            filter_list = list(filter(lambda x: x['properties']['type'][type] > 0, payload['accidents']['features']))
+            payload['accidents']['features'] = filter_list
+        if hour:
+            filter_list = list(filter(lambda x: x['properties']['meta']['USTUNDE'] == int(hour), payload['accidents']['features']))
+            payload['accidents']['features'] = filter_list
+        return payload, 200
+    except Exception as e:
+        print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
+        return 'No data available. Try other parameter values.', 400
 
 
 # fetch latest entry from table
