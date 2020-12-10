@@ -12,11 +12,11 @@ import atexit
 
 app = Flask(__name__)
 api = Api(app,
-          version='1.0.1',
+          version='1.2.0',
           title='City Data Visualizer',
           default='API Endpoints',
           default_label='',
-          doc='/apidocs/')
+          doc='/')
 
 
 # connect to db
@@ -46,13 +46,13 @@ class BerlinCovidDistrict(Resource):
 
 
 @api.route('/api/v1/berlin-covid-district/latest')
-class BerlinCovidDistrict(Resource):
+class BerlinCovidDistrictLatest(Resource):
     def get(self):
         return get_table_data_latest('berlin_covid_district'), 200
 
 
 @api.route('/api/v1/berlin-accidents')
-class BerlinCovidDistrict(Resource):
+class BerlinCovidDAccidents(Resource):
     def get(self):
         # Define parser and request args
         parser = reqparse.RequestParser()
