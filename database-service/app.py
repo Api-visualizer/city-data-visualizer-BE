@@ -1,4 +1,5 @@
 import os, sys
+import json
 
 import werkzeug
 werkzeug.cached_property = werkzeug.utils.cached_property  # fix for "ImportError: cannot import name 'cached_property'"
@@ -23,8 +24,11 @@ api = Api(app,
 USER = os.environ.get('DB_USER')
 PASS = os.environ.get('DB_PW')
 URL = os.environ.get('DB_URL')
-client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
-
+try:
+    client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
+except Exception as e:
+    print(e)
+    sys.exit()
 
 # routes
 @api.route('/api/v1/berlin-covid-age')
@@ -57,7 +61,7 @@ class BerlinCovidDAccidents(Resource):
         # Define parser and request args
         parser = reqparse.RequestParser()
         parser.add_argument('year', type=int, required=False, help='you can set a parameter: year=2019')
-        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='foot' | options are: bike, car, foot, motorcycle, truck")
+        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='pedestrian' | options are: bike, car, motorcycle, truck, pedestrian, other")
         args = parser.parse_args()
         year = args['year']
         type = args['type']
@@ -70,8 +74,8 @@ class BerlinCovidDAccidentsNew(Resource):
     def get(self):
          # Define parser and request args
         parser = reqparse.RequestParser()
-        parser.add_argument('year', type=int, required=False, help='you can set a parameter: year=2019')
-        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='foot' | options are: bike, car, foot, motorcycle, truck")
+        parser.add_argument('year', type=int, required=True, help='you can set a parameter: year=2019')
+        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='pedestrian' | options are: bike, car, motorcycle, truck, pedestrian, other")
         parser.add_argument('hour', type=str, required=False, help="you can set a parameter: hour='16' | values form 0-24")
         args = parser.parse_args()
         year = args['year']
@@ -95,7 +99,7 @@ def get_table_data(table_name, **kwargs):
                 return new_payload
 
         else:
-            payload = [data for data in table_data]
+            payload = list(table_data)
         return payload, 200
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
@@ -106,16 +110,14 @@ def get_table_data(table_name, **kwargs):
 def get_accident_data(table_name, **kwargs):
     year, type, hour = kwargs['year'], kwargs['type'], kwargs['hour']
     try:
-        payload = client[table_name]
-        if year:
-            payload = payload['geojson_' + str(year)]
+        payload = client[table_name]['geojson_' + str(year)]
         if type:
             filter_list = list(filter(lambda x: x['properties']['type'][type] > 0, payload['accidents']['features']))
             payload['accidents']['features'] = filter_list
         if hour:
             filter_list = list(filter(lambda x: x['properties']['meta']['USTUNDE'] == int(hour), payload['accidents']['features']))
             payload['accidents']['features'] = filter_list
-        return payload, 200
+        return dict(payload), 200
     except Exception as e:
         print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
         return 'No data available. Try other parameter values.', 400
@@ -124,8 +126,7 @@ def get_accident_data(table_name, **kwargs):
 # fetch latest entry from table
 def get_table_data_latest(table_name):
     try:
-        table_data = client[table_name]   # not sure how only retreive the last document.
-        payload = [data for data in table_data]
+        payload = list(client[table_name])   # not sure how only retreive the last document.
         if payload:
             return payload[0], 200 # this method is not optimal
         return 'No data available. Please validate your request and try again.', 400
