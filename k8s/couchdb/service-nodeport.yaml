@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: couchdb-dashboard
+  name: couchdb-nodeport
   namespace: sachs
 spec:
-  clusterIP: 10.100.217.45
+  type: NodePort
   ports:
-  - nodePort: 30618
+  - nodePort: 31111
     port: 5984
     protocol: TCP
     targetPort: 5984
   selector:
     statefulset.kubernetes.io/pod-name: couchdb-0
-  type: LoadBalancer
