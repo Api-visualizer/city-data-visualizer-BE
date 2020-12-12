@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cdv-mail
-          image: registry.datexis.com/ksachs/cdv-mail:v7
+          image: registry.datexis.com/ksachs/cdv-mail:v10
           ports:
             - name: client-port
               containerPort: 5000
