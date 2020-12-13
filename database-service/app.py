@@ -93,7 +93,7 @@ class BerlinCovidAge(Resource):
             clean_data = cleaned_data[year]
             for clean_dat in clean_data:
                 clean_dat['age'] = clean_dat['age'].strip()
-                clean_dat['age'] = clean_dat['age'].replace("  ", " ")
+                clean_dat['age'] = clean_dat['age'].replace("  ", " ").replace("  ", " ")
         return cleaned_data, 200
 
 
