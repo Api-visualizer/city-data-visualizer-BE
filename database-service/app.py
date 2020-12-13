@@ -74,6 +74,26 @@ class BerlinCovidDistrict(Resource):
         type = args['type']
         return get_table_data('berlin_accidents', year=year, type=type), 200
 
+# routes
+@api.route('/api/v1/berlin-cancer')
+class BerlinCovidAge(Resource):
+    def get(self):
+        raw_data = get_table_data('berlin_cancer')[0]
+        cleaned_data = {}
+        for data in raw_data:
+            key = list(data.keys())[2]
+            del data['_id']
+            del data['_rev']
+            cleaned_data[key] = data[key]
+
+        years = list(cleaned_data.keys())
+        for year in years:
+            clean_data = cleaned_data[year]
+            for clean_dat in clean_data:
+                clean_dat['age'] = clean_dat['age'].strip()
+                clean_dat['age'] = clean_dat['age'].replace("  ", " ")
+        return cleaned_data, 200
+
 
 # fetch all entries from table
 def get_table_data(table_name, **kwargs):
