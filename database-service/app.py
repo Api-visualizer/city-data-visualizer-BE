@@ -76,6 +76,13 @@ class BerlinCovidDistrict(Resource):
         type = args['type']
         return get_table_data('berlin_accidents', year=year, type=type), 200
 
+# routes
+@api.route('/api/v1/berlin-cancer')
+class BerlinCovidAge(Resource):
+    def get(self):
+        data = get_table_data('berlin_cancer')
+        return data[0], 200
+
 
 # fetch all entries from table
 def get_table_data(table_name, **kwargs):
