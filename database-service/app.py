@@ -5,6 +5,7 @@ werkzeug.cached_property = werkzeug.utils.cached_property  # fix for "ImportErro
 
 from cloudant import Cloudant
 from flask import Flask
+from flask_cors import CORS
 from flask_restplus import Api, Resource, reqparse
 from datetime import datetime
 import atexit
@@ -17,13 +18,14 @@ api = Api(app,
           default='API Endpoints',
           default_label='',
           doc='/apidocs/')
-
+CORS(app)
 
 # connect to db
 USER = os.environ.get('DB_USER')
 PASS = os.environ.get('DB_PW')
 URL = os.environ.get('DB_URL')
 client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
+
 
 # routes
 @api.route('/api/v1/berlin-covid-age')
