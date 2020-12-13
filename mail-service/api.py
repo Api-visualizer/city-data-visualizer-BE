@@ -23,7 +23,7 @@ def send_mail():
 	status_code = connect_to_smtp_server(data)
 	print(f'status_code: {status_code}')
 	if status_code == 200:
-		return json.dumps({'response': 'success'}), status_code
+		return json.dumps({'response': 'sent'}), status_code
 	else:
 		return json.dumps({'response': 'failed'}), status_code
 
