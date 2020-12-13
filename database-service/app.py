@@ -1,151 +1,83 @@
-import os, sys
-import json
-
-import werkzeug
-werkzeug.cached_property = werkzeug.utils.cached_property  # fix for "ImportError: cannot import name 'cached_property'"
-
-from cloudant import Cloudant
 from flask import Flask
-from flask_restplus import Api, Resource, reqparse
+from flask_restful import reqparse
 
-import atexit
+import os, sys
+import pycouchdb
+import urllib3
 
+
+urllib3.disable_warnings() # Disable missing certificate warning
 
 app = Flask(__name__)
-api = Api(app,
-          version='1.2.0',
-          title='City Data Visualizer',
-          default='API Endpoints',
-          default_label='',
-          doc='/')
 
 
-# connect to db
+# Connect to db
 USER = os.environ.get('DB_USER')
 PASS = os.environ.get('DB_PW')
 URL = os.environ.get('DB_URL')
-try:
-    client = Cloudant(USER, PASS, url=URL, connect=True, auto_renew=True)
-except Exception as e:
-    print(e)
-    sys.exit()
-
-# routes
-@api.route('/api/v1/berlin-covid-age')
-class BerlinCovidAge(Resource):
-    def get(self):
-        return get_table_data('covid_age'), 200
+server = pycouchdb.Server("http://{}:{}@{}".format(USER, PASS, URL))
 
 
-@api.route('/api/v1/berlin-shapes-district')
-class BerlinShapesDistrict(Resource):
-    def get(self):
-        return get_table_data('berlin_shapes_district'), 200
+
+# Routes
+@app.route("/api/v1/berlin-covid-age")
+def get_covid_per_age():
+    return get_table_data("covid_age"), 200
 
 
-@api.route('/api/v1/berlin-covid-district')
-class BerlinCovidDistrict(Resource):
-    def get(self):
-        return get_table_data('berlin_covid_district'), 200
+@app.route("/api/v1/berlin-shapes-district")
+def get_district_shapes():
+    return get_table_data("berlin_shapes_district"), 200
 
 
-@api.route('/api/v1/berlin-covid-district/latest')
-class BerlinCovidDistrictLatest(Resource):
-    def get(self):
-        return get_table_data_latest('berlin_covid_district'), 200
+@app.route("/api/v1/berlin-covid-district")
+def get_covid_per_district():
+    return get_table_data("berlin_covid_district"), 200
 
 
-@api.route('/api/v1/berlin-accidents')
-class BerlinCovidDAccidents(Resource):
-    def get(self):
-        # Define parser and request args
-        parser = reqparse.RequestParser()
-        parser.add_argument('year', type=int, required=False, help='you can set a parameter: year=2019')
-        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='pedestrian' | options are: bike, car, motorcycle, truck, pedestrian, other")
-        args = parser.parse_args()
-        year = args['year']
-        type = args['type']
-        return get_table_data('berlin_accidents', year=year, type=type), 200
+@app.route("/api/v1/berlin-covid-district/latest")
+def get_covid_per_district_latest():
+    return get_latest_table_data("berlin_covid_district"), 200
 
 
-# this route should replace '/api/v1/berlin-accidents'
-@api.route('/api/v1/berlin-accidents-new')
-class BerlinCovidDAccidentsNew(Resource):
-    def get(self):
-         # Define parser and request args
-        parser = reqparse.RequestParser()
-        parser.add_argument('year', type=int, required=True, help='you can set a parameter: year=2019')
-        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='pedestrian' | options are: bike, car, motorcycle, truck, pedestrian, other")
-        parser.add_argument('hour', type=str, required=False, help="you can set a parameter: hour='16' | values form 0-24")
-        args = parser.parse_args()
-        year = args['year']
-        type = args['type']
-        hour = args['hour']
-        return get_accident_data('berlin_accidents', year=year, type=type, hour=hour), 200
+@app.route("/api/v1/berlin-accidents")
+def get_accidents():
+    parser = reqparse.RequestParser()
+    parser.add_argument("year", type=int, required=True, help="You can set a parameter: year=2019")
+    parser.add_argument("type", type=str, required=False, help="You can set a parameter: type='pedestrian' | Options are: bike, car, motorcycle, truck, pedestrian, other")
+    parser.add_argument("hour", type=str, required=False, help="You can set a parameter: hour='16' | Values form 0-24")
+    
+    args = parser.parse_args()    
+    year, accident_type, hour = args["year"], args["type"], args["hour"]
+    return get_accident_data("berlin_accidents", year=year, type=accident_type, hour=hour)
 
 
-# fetch all entries from table
-def get_table_data(table_name, **kwargs):
-    year, type = kwargs['year'], kwargs['type']
-    try:
-        table_data = client[table_name]
-        if year:
-            payload = table_data[str(year)]
-            if type:
-                new_payload = []
-                for idx in payload['accidents'].items():
-                    if idx[1][type] > 0:
-                        new_payload.append(idx)
-                return new_payload
 
-        else:
-            payload = list(table_data)
-        return payload, 200
-    except Exception as e:
-        print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
-        return 'No data available. Try other parameter values.', 400
-
-
-# accident route
+# Helper methods
 def get_accident_data(table_name, **kwargs):
-    year, type, hour = kwargs['year'], kwargs['type'], kwargs['hour']
-    try:
-        payload = client[table_name]['geojson_' + str(year)]
-        if type:
-            filter_list = list(filter(lambda x: x['properties']['type'][type] > 0, payload['accidents']['features']))
-            payload['accidents']['features'] = filter_list
+    year, accident_type, hour = kwargs["year"], kwargs["type"], kwargs["hour"]
+    
+    try:        
+        payload = get_document_by_id(table_name, "geojson_{}".format(year))
+
+        if accident_type:
+            filter_list = list(filter(lambda x: x["properties"]["type"][accident_type] > 0, payload["accidents"]["features"]))
+            payload["accidents"]["features"] = filter_list
         if hour:
-            filter_list = list(filter(lambda x: x['properties']['meta']['USTUNDE'] == int(hour), payload['accidents']['features']))
-            payload['accidents']['features'] = filter_list
+            filter_list = list(filter(lambda x: x["properties"]["meta"]["USTUNDE"] == int(hour), payload["accidents"]["features"]))
+            payload["accidents"]["features"] = filter_list
         return dict(payload), 200
     except Exception as e:
-        print('ERROR: Could not fetch table {}. Cause: {}'.format(table_name, e))
-        return 'No data available. Try other parameter values.', 400
+        print("ERROR: Could not fetch table {}. Cause: {}".format(table_name, e))
+        return "No data available. Try other parameter values.", 400
 
 
-# fetch latest entry from table
-def get_table_data_latest(table_name):
-    try:
-        payload = list(client[table_name])   # not sure how only retreive the last document.
-        if payload:
-            return payload[0], 200 # this method is not optimal
-        return 'No data available. Please validate your request and try again.', 400
-    except Exception as e:
-        print('ERROR: Could not fetch table >{}<. Cause: {}'.format(table_name, e))
-        return e, 404
+# Database access
+def get_table_data(table_name):    
+    return {"data": list(server.database(table_name).all())}
 
+def get_latest_table_data(table_name):
+    return list(server.database(table_name).all())[-1]
 
-
-# disconnct from db on server shutdown
-@atexit.register
-def shutdown():
-    try:
-        client.disconnect()
-        print('disconnected from db')
-    except Exception:
-        pass
-
-
-if __name__ == '__main__':
-    # run app
-    app.run(debug=True)
+def get_document_by_id(table_name, id):
+    return server.database(table_name).get(id)
