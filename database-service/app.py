@@ -70,7 +70,7 @@ def get_accident_data(table_name, **kwargs):
     year, accident_type, hour = kwargs['year'], kwargs['type'], kwargs['hour']
 
     payload = get_table_data_by_id(table_name, 'geojson_{}'.format(str(year)))
-    if payload[1] == 200: 
+    if payload[1] == 200:         
         data = payload[0]['data']        
         if accident_type:
             filter_list = list(filter(lambda x: x['properties']['type'][accident_type] > 0, data['accidents']['features']))
@@ -81,11 +81,12 @@ def get_accident_data(table_name, **kwargs):
         return {'data': data}, 200
     return payload
 
-def get_cancer_diagnoses_data(table_name):
-    payload = get_table_data('berlin_cancer')[0]['data']    
+def get_cancer_diagnoses_data(table_name):    
+    response = get_table_data('berlin_cancer')
 
-    if payload[1] == 200:
-        cleaned_data = {} 
+    if response[1] == 200:
+        cleaned_data = {}
+        payload = response[0]['data'] 
 
         for data in payload:
             year = list(data['doc'].keys())[2]        
@@ -99,7 +100,7 @@ def get_cancer_diagnoses_data(table_name):
                 clean_dat['age'] = clean_dat['age'].strip()
                 clean_dat['age'] = clean_dat['age'].replace("  ", " ").replace("  ", " ")
         return {'data': cleaned_data}, 200
-    return payload
+    return response
 
 
 # Run app
