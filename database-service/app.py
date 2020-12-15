@@ -69,17 +69,17 @@ def get_cancer_diagnoses():
 def get_accident_data(table_name, **kwargs):
     year, accident_type, hour = kwargs['year'], kwargs['type'], kwargs['hour']
 
-    payload = get_table_data_by_id(table_name, 'geojson_{}'.format(str(year)))
-    if payload[1] == 200:         
-        data = payload[0]['data']        
+    response = get_table_data_by_id(table_name, 'geojson_{}'.format(str(year)))
+    if response[1] == 200:         
+        payload = response[0]['data']        
         if accident_type:
-            filter_list = list(filter(lambda x: x['properties']['type'][accident_type] > 0, data['accidents']['features']))
-            data['accidents']['features'] = filter_list
+            filter_list = list(filter(lambda x: x['properties']['type'][accident_type] > 0, payload['accidents']['features']))
+            payload['accidents']['features'] = filter_list
         if hour:
-            filter_list = list(filter(lambda x: x['properties']['meta']['USTUNDE'] == int(hour), data['accidents']['features']))
-            data['accidents']['features'] = filter_list
-        return {'data': data}, 200
-    return payload
+            filter_list = list(filter(lambda x: x['properties']['meta']['USTUNDE'] == int(hour), payload['accidents']['features']))
+            payload['accidents']['features'] = filter_list
+        return {'data': payload}, 200
+    return response
 
 def get_cancer_diagnoses_data(table_name):    
     response = get_table_data('berlin_cancer')
