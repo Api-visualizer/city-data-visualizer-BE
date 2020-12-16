@@ -1,6 +1,7 @@
 FROM python:3.8
 
 COPY database-service/app.py .
+COPY database-service/db.py .
 COPY database-service/requirements.txt .
 
 RUN chmod +x requirements.txt
