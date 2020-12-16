@@ -3,7 +3,7 @@ FROM python:3.8
 COPY database-service/app.py .
 COPY database-service/db.py .
 COPY database-service/requirements.txt .
-
+COPY database-service/__init__.py .
 RUN chmod +x requirements.txt
 
 RUN pip install -r requirements.txt --no-cache-dir --compile
