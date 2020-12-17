@@ -3,8 +3,6 @@ name: cdv-backend
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   PUBLISH-BE:
