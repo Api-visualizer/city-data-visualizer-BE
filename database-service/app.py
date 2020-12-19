@@ -97,6 +97,7 @@ def get_accident_data(table_name, **kwargs):
         return {'data': payload}, 200
     return response
 
+
 def get_cancer_diagnoses_data(table_name):    
     response = get_table_data('berlin_cancer')
 
