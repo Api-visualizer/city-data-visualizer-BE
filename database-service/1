@@ -1,0 +1,22 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  RECEIVER: s77518@beuth-hochschule.de
+  SENDER: ktrn.schs@gmail.com
+  SMTP_PASSWORD: oWq6CcU7N
+  SMTP_PORT: "587"
+  SMTP_SERVER: smtp.gmail.com
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"RECEIVER":"s77518@beuth-hochschule.de","SENDER":"anira.schas@gmail.com","SMTP_PASSWORD":"gnagsua1","SMTP_PORT":"465","SMTP_SERVER":"smtp.gmail.com"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"cdv-mail-config","namespace":"sachs"}}
+  creationTimestamp: "2020-12-07T20:54:05Z"
+  name: cdv-mail-config
+  namespace: sachs
+  resourceVersion: "436332932"
+  selfLink: /api/v1/namespaces/sachs/configmaps/cdv-mail-config
+  uid: 8234836e-1b46-4ea9-bd13-20ee763b394a
