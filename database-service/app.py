@@ -74,6 +74,18 @@ class BerlinCovidDistrict(Resource):
         args = parser.parse_args()
         year = args['year']
         type = args['type']
+        return get_table_data('berlin_accidents', year=year, type=type), 200
+
+@api.route('/api/v1/berlin-accidents-new')
+class BerlinCovidDistrict(Resource):
+    def get(self):
+        # Define parser and request args
+        parser = reqparse.RequestParser()
+        parser.add_argument('year', type=int, required=False, help='you can set a parameter: year=2019')
+        parser.add_argument('type', type=str, required=False, help="you can set a parameter: type='foot' | options are: bike, car, foot, motorcycle, truck")
+        args = parser.parse_args()
+        year = args['year']
+        type = args['type']
         return get_table_data('berlin_accidents_preprocessed', year=year, type=type), 200
 
 # routes
