@@ -104,7 +104,6 @@ def get_accident_data(table_name, **kwargs):
 
 def get_cancer_diagnoses_data(table_name):    
     response = get_table_data('berlin_cancer')
-
     if response[1] == 200:
         cleaned_data = {}
         payload = response[0]['data'] 
