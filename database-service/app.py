@@ -61,7 +61,7 @@ def get_accidents():
 
 
 @app.route('/api/v1/berlin-accidents-new')
-def get_accidents():
+def get_accidents_new():
     # Define parser and request args
     parser = reqparse.RequestParser()
     parser.add_argument('year', type=int, required=False, help='You can set a parameter: year=2019')
@@ -72,8 +72,8 @@ def get_accidents():
 
     year, accident_type, hour = args['year'], args['type'], args['hour']
     if year:
-        return get_accident_data('berlin_accidents', year=year, type=accident_type, hour=hour)
-    return get_table_data('berlin_accidents-preprocessed')
+        return get_accident_data('berlin_accidents_preprocessed', year=year, type=accident_type, hour=hour)
+    return get_table_data('berlin_accidents_preprocessed')
 
 
 @app.route('/api/v1/berlin-cancer')
