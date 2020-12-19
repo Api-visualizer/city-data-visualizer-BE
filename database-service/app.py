@@ -74,7 +74,7 @@ class BerlinCovidDistrict(Resource):
         args = parser.parse_args()
         year = args['year']
         type = args['type']
-        return get_table_data('berlin_accidents', year=year, type=type), 200
+        return get_table_data('berlin_accidents_preprocessed', year=year, type=type), 200
 
 # routes
 @api.route('/api/v1/berlin-cancer')
