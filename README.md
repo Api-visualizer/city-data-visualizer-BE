@@ -34,7 +34,7 @@ flask run
 cd database-service/
 docker build -t cdv-backend:local . -f local.Dockerfile
 
-docker run -p 5000:5000 cdv-backend:local
+docker run -it -p 5000:5000 cdv-backend:local
 ```
 
 ## docker container clean up
