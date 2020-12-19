@@ -10,6 +10,10 @@ app = Flask(__name__)
 CORS(app)
 
 
+@app.route('/api/v1/info')
+def get_berlin_shapes():
+    return {'api-release': '19.12.2020'}
+
 # Routes
 @app.route('/api/v1/berlin-shapes-district')
 def get_berlin_shapes():    
