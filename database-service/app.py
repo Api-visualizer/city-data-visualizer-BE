@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restplus import reqparse
 
-from db import get_table_data, get_table_data_by_id, get_latest_table_data
+from .db import get_table_data, get_table_data_by_id, get_latest_table_data
 from datetime import datetime
 
 
@@ -58,6 +58,22 @@ def get_accidents():
     if year:
         return get_accident_data('berlin_accidents', year=year, type=accident_type, hour=hour)
     return get_table_data('berlin_accidents')
+
+
+@app.route('/api/v1/berlin-accidents-new')
+def get_accidents():
+    # Define parser and request args
+    parser = reqparse.RequestParser()
+    parser.add_argument('year', type=int, required=False, help='You can set a parameter: year=2019')
+    parser.add_argument('type', type=str, required=False,
+                        help="You can set a parameter: type='foot' | options are: bike, car, foot, motorcycle, truck")
+    parser.add_argument('hour', type=str, required=False, help="You can set a parameter: hour='16' | values form 0-24")
+    args = parser.parse_args()
+
+    year, accident_type, hour = args['year'], args['type'], args['hour']
+    if year:
+        return get_accident_data('berlin_accidents', year=year, type=accident_type, hour=hour)
+    return get_table_data('berlin_accidents-preprocessed')
 
 
 @app.route('/api/v1/berlin-cancer')
