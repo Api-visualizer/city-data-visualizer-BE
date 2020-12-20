@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cdv-backend
-          image: registry.datexis.com/ksachs/cdv-backend:latest
+          image: registry.datexis.com/ksachs/cdv-backend:v102bp
           ports:
             - name: client-port
               containerPort: 5000
