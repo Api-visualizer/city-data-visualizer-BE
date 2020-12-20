@@ -11,8 +11,8 @@ CORS(app)
 
 
 @app.route('/api/v1/info')
-def get_berlin_shapes():
-    return {'api-release': '19.12.2020'}
+def get_info():
+    return {'api-release': datetime.now().strftime("%d.%m.%Y")}
 
 # Routes
 @app.route('/api/v1/berlin-shapes-district')
@@ -23,6 +23,13 @@ def get_berlin_shapes():
 @app.route('/api/v1/berlin-covid-age')
 def get_covid_per_age():
     return get_table_data('covid_age')
+
+
+@app.route('/api/v1/covid-legend')
+def get_covid_legend():
+    data = get_table_data('covid_map_legend')
+    legend = data[0]['data'][0]['doc']['legend']
+    return {'legend': legend }
 
 
 @app.route('/api/v1/berlin-covid-district')
