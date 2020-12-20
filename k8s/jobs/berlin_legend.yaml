@@ -1,0 +1,20 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: covid-legend
+  namespace: sachs
+spec:
+  schedule: "0 */8 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: script
+            image: registry.datexis.com/ksachs/covid-legend:latest
+            envFrom:
+              - configMapRef:
+                  name: cdv-backend-config
+          imagePullSecrets:
+            - name: private-registry-auth
+          restartPolicy: Never

@@ -1,17 +1,12 @@
 import urllib3
-from os.path import join, dirname
-from dotenv import load_dotenv
 import couchdb
 from datetime import datetime
 urllib3.disable_warnings()
+import os
 
-# Load .env
-dotenv_path = join(dirname(__file__), '../../backup/.env')
-load_dotenv(dotenv_path)
-
-ADMIN = 'admin'
-PASSWORD = 'password'
-URL = '141.64.3.248:5984'
+ADMIN = os.environ.get('DB_USER')
+PASSWORD = os.environ.get('DB_PW')
+URL = os.environ.get('DB_URL')
 
 server_url = f"http://{ADMIN}:{PASSWORD}@{URL}/"
 couch = couchdb.Server(server_url)
