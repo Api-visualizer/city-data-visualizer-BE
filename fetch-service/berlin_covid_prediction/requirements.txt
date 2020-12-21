@@ -1,0 +1,5 @@
+pycouchdb
+python-dotenv
+urllib3
+pandas
+numpy
