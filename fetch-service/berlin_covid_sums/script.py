@@ -17,17 +17,17 @@ db_url = "http://{}:{}@141.64.3.248:5984".format(os.environ.get("COUCHDB_USERNAM
 server = pycouchdb.Server(db_url)
 db = server.database("berlin_covid_sums")
 
+def add_leading_zero(string):
+    if len(string) < 2:
+        return "0" + string
+    return string
+
 yesterday = datetime.today()-timedelta(days=1)
 d, m, y = add_leading_zero(str(yesterday.day)), add_leading_zero(str(yesterday.month)), yesterday.year
 date = "{}.{}.{}".format(d, m, y)
 
 base_url = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/arcgis/rest/services/Covid19_RKI_Sums/FeatureServer/0/query?where=IdBundesland%3D11+AND+Meldedatum+%3D+TIMESTAMP+%27{}+00%3A00%3A00%27&objectIds=&time=&resultType=standard&outFields=&returnIdsOnly=true&returnUniqueIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&sqlFormat=standard&f=pjson&token="
 feature_url = "https://services7.arcgis.com/mOBPykOjAyBO2ZKk/ArcGIS/rest/services/Covid19_RKI_Sums/FeatureServer/0/{}?f=pjson"
-
-def add_leading_zero(string):
-    if len(string) < 2:
-        return "0" + string
-    return string
 
 def find_documents_by_ids(ids):
     documents = []
