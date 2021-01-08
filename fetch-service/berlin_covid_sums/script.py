@@ -5,6 +5,8 @@ import requests
 import json
 from datetime import datetime, timedelta
 import urllib3
+import time
+import random
 import pycouchdb
 
 urllib3.disable_warnings()
@@ -45,8 +47,8 @@ def sum_cases_and_deaths(documents):
         time.sleep(random.uniform(0,1))
     return cases, deaths
 
-def post_to_db(month, day, cases, deaths):
-    date = "{}.{}.2020".format(day, month)    
+def post_to_db(year, month, day, cases, deaths):
+    date = "{}.{}.{}".format(day, month, year)
     return db.save({"date": date, "cases": cases, "deaths": deaths})
 
 if not any(document["doc"]["date"] == date for document in db.all()): 
@@ -57,4 +59,4 @@ if not any(document["doc"]["date"] == date for document in db.all()):
     documents = find_documents_by_ids(data["objectIds"])
     cases, deaths = sum_cases_and_deaths(documents)
         
-    post_to_db(m, d, cases, deaths)
+    post_to_db(y, m, d, cases, deaths)
