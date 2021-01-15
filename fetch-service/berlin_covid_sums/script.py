@@ -51,12 +51,13 @@ def post_to_db(year, month, day, cases, deaths):
     date = "{}.{}.{}".format(day, month, year)
     return db.save({"date": date, "cases": cases, "deaths": deaths})
 
-if not any(document["doc"]["date"] == date for document in db.all()): 
-    timestamp = "{}-{}-{}".format(y, m, d)
-    url = base_url.format(timestamp)
-    data = json.loads(requests.get(url).text)
+if __name__== "__main__":
+    if not any(document["doc"]["date"] == date for document in db.all()): 
+        timestamp = "{}-{}-{}".format(y, m, d)
+        url = base_url.format(timestamp)
+        data = json.loads(requests.get(url).text)
     
-    documents = find_documents_by_ids(data["objectIds"])
-    cases, deaths = sum_cases_and_deaths(documents)
-        
-    post_to_db(y, m, d, cases, deaths)
+        documents = find_documents_by_ids(data["objectIds"])
+        cases, deaths = sum_cases_and_deaths(documents)
+
+        post_to_db(y, m, d, cases, deaths)
