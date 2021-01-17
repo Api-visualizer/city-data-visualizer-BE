@@ -15,9 +15,10 @@ urllib3.disable_warnings()
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-db_url = "http://{}:{}@141.64.3.248:5984".format(os.environ.get("COUCHDB_USERNAME"), os.environ.get("COUCHDB_PASSWORD"))
-server = pycouchdb.Server(db_url)
-db = server.database("berlin_covid_sums")
+def init_db():
+    db_url = "http://{}:{}@141.64.3.248:5984".format(os.environ.get("COUCHDB_USERNAME"), os.environ.get("COUCHDB_PASSWORD"))
+    server = pycouchdb.Server(db_url)
+    return server.database("berlin_covid_sums")
 
 def add_leading_zero(string):
     if len(string) < 2:
@@ -52,12 +53,15 @@ def post_to_db(year, month, day, cases, deaths):
     return db.save({"date": date, "cases": cases, "deaths": deaths})
 
 if __name__== "__main__":
+    db = init_db()
     if not any(document["doc"]["date"] == date for document in db.all()): 
+        yesterday = datetime.today()-timedelta(days=1)
+        d, m, y = add_leading_zero(str(yesterday.day)), add_leading_zero(str(yesterday.month)), yesterday.year
         timestamp = "{}-{}-{}".format(y, m, d)
         url = base_url.format(timestamp)
         data = json.loads(requests.get(url).text)
     
         documents = find_documents_by_ids(data["objectIds"])
-        cases, deaths = sum_cases_and_deaths(documents)
-
-        post_to_db(y, m, d, cases, deaths)
+        if len(documents) > 0:
+            cases, deaths = sum_cases_and_deaths(documents)         
+            post_to_db(y, m, d, cases, deaths)
