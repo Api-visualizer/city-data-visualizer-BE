@@ -20,6 +20,13 @@ def get_berlin_shapes():
     return get_table_data('berlin_shapes_district')
 
 
+@app.route('/api/v1/berlin-covid-average/latest')
+def get_latest_covid_data():
+    time_format = '%d.%m.%Y'
+    dates = lambda x: datetime.strptime(x['doc']['date'], time_format)
+    return get_latest_table_data('berlin_covid_moving_average', dates)
+
+
 @app.route('/api/v1/berlin-covid-age')
 def get_covid_per_age():
     return get_table_data('covid_age')
@@ -44,14 +51,6 @@ def get_covid_per_district_latest():
     return get_latest_table_data('berlin_covid_district', dates)
 
 
-
-@app.route('/api/v1/predictions/covid-cases/latest')
-def get_prediction_covid_cases_latest():
-    time_format = '%d.%m.%Y'
-    dates = lambda x: datetime.strptime(x['doc']['date'], time_format)
-    return get_latest_table_data('berlin_covid_prediction', dates)
-
-
 @app.route('/api/v1/berlin-covid-intensive-care')
 def get_covid_intensive_care():
     return get_table_data('berlin_covid_intensivecare')
@@ -70,6 +69,11 @@ def get_prediction_hospital_capacities_latest():
     dates = lambda x: datetime.strptime(x['doc']['date'], time_format)
     return get_latest_table_data('berlin_intensivecare_prediction', dates)
 
+@app.route('/api/v1/predictions/covid-cases/latest')
+def get_prediction_covid_cases_latest():
+    time_format = '%d.%m.%Y'
+    dates = lambda x: datetime.strptime(x['doc']['date'], time_format)
+    return get_latest_table_data('berlin_covid_prediction', dates)
 
 @app.route('/api/v1/berlin-accidents')
 def get_accidents(): 
