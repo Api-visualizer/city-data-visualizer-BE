@@ -1,0 +1,16 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: berlin-covid-moving-average
+spec:
+  schedule: "0 */6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: script
+            image: registry.datexis.com/kbrendel/berlin_covid_moving_average
+          imagePullSecrets: 
+            - name: private-registry-auth
+          restartPolicy: Never
